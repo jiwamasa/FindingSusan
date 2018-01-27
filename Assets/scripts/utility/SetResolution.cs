@@ -5,7 +5,7 @@ using UnityEngine;
 // sets resolution of screen
 public class SetResolution : MonoBehaviour {
 
-	void Start () {
+	void Awake () {
 		Screen.SetResolution (1280, 720, false);	
 	}
 }
