@@ -8,8 +8,12 @@ public class Animatic : Memory {
 	public List<Sprite> sprites; // sprites in animatic
 	public float frame_len; // length of frame in seconds
 
-	public override void startMemory (){
+	public override void startMemory () {
 		StartCoroutine (animate ());
+	}
+
+	public override void endMemory() {
+		StopAllCoroutines ();
 	}
 
 	IEnumerator animate() {

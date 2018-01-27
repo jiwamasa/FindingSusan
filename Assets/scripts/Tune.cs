@@ -21,14 +21,16 @@ public class Tune : MonoBehaviour {
 	public SpriteRenderer static_sprite; // static sprite for creating static effect
 	public List<Pair<Vector2, GameObject>> nodes; // tunable locations (memories)
 	public bool memory_mode; // has a node been activated?
+	public AudioSource static_channel; // plays static on loop
+	public AudioSource music_channel; // plays music themes for memories
 
 	NodeComparer node_comparer; // compares nodes based on distance from blip
 	float hdir; // horizontal input amount
 	float vdir; // vertical input amount
 
-	const float blip_speed = 0.01f;  // speed of blip per frame
-	const float blip_x_bound = 150f; // horizontal bound
-	const float blip_y_bound = 120f; // vertical bound
+	const float blip_speed = 0.005f;  // speed of blip per frame
+	const float blip_x_bound = 100f; // horizontal bound
+	const float blip_y_bound = 78.5f; // vertical bound
 	const float blip_shift_back = 0.03f; // amount of shift back if out of bounds
 	const float visible_dist = 30f; // distance before static starts to fade away
 	const float find_dist = 5f; // distance before player can activate memory
@@ -39,12 +41,17 @@ public class Tune : MonoBehaviour {
 		node_comparer.blip_pos = blip_obj.transform.localPosition;
 		nodes = new List<Pair<Vector2, GameObject>> ();
 		// initialize nodes
+		nodes.Add(new Pair<Vector2, GameObject>(new Vector2(0f, 0f), GameObject.Find("Instructions")));
 		nodes.Add(new Pair<Vector2, GameObject>(new Vector2(-30f, -30f), GameObject.Find("FrisbeeMinigame")));
 		nodes.Add(new Pair<Vector2, GameObject>(new Vector2(50f, 0), GameObject.Find("BoneDigMinigame")));
 		nodes.Add(new Pair<Vector2, GameObject>(new Vector2(0, 55f), GameObject.Find("SpaceMemory")));
+		nodes.Add(new Pair<Vector2, GameObject>(new Vector2(20f, -40f), GameObject.Find("WatermelonMemory")));
 		nodes.Sort (node_comparer);
+		foreach (Pair<Vector2, GameObject> node in nodes)
+			node.second.SetActive (false);
 		// initialize other state
 		memory_mode = false;
+		approachNode(); 
 	}
 
 	void FixedUpdate () {
@@ -61,8 +68,12 @@ public class Tune : MonoBehaviour {
 			else if (Input.GetKey (KeyCode.LeftArrow))
 				--hdir;
 			// check spacebar
-			if (Input.GetKey (KeyCode.Space))
+			if (Input.GetKeyDown (KeyCode.Space))
 				activateNode ();
+		} else {
+			// check spacebar
+			if (Input.GetKeyDown (KeyCode.Space))
+				deactivateNode ();
 		}
 	}
 
@@ -77,7 +88,7 @@ public class Tune : MonoBehaviour {
 		Debug.Log("nodes:");
 		for (int i = 0; i < nodes.Count; ++i)
 			Debug.Log (nodes[i].first);
-			*/
+		*/
 	}
 
 	// updates blips position
@@ -100,10 +111,14 @@ public class Tune : MonoBehaviour {
 		float dist = Vector2.Distance (blip_obj.transform.localPosition, nearest.first);
 		if (dist < visible_dist) { // if within visible distance
 			static_sprite.color = new Color (1, 1, 1, dist / visible_dist); // fade out static
+			static_channel.volume = dist / visible_dist; // fade out static sound
+			music_channel.volume = 1 - (dist / visible_dist); // fade in music
 			if (!nearest.second.activeInHierarchy) { // show nearest memory node
 				nearest.second.SetActive (true);
 				for (int i = 1; i < nodes.Count; ++i) // hide others
 					nodes[i].second.SetActive(false);
+				music_channel.clip = nearest.second.GetComponent<Memory> ().music;
+				music_channel.Play ();
 			}
 		} else {
 			nearest.second.SetActive (false); // hide all memory nodes if too far
@@ -117,7 +132,17 @@ public class Tune : MonoBehaviour {
 		if (dist < find_dist) {
 			memory_mode = true;
 			static_sprite.gameObject.SetActive (false); // hide static
+			static_channel.mute = true; // turn off static noise
 			nearest.second.GetComponent<Memory>().startMemory(); // start memory
 		}
+	}
+
+	// go back into tuning mode from node
+	void deactivateNode() {
+		Pair<Vector2, GameObject> nearest = nodes [0];
+		nearest.second.GetComponent<Memory> ().endMemory (); // end memory sequence
+		memory_mode = false;
+		static_sprite.gameObject.SetActive (true); // show static
+		static_channel.mute = false; // turn on static noise
 	}
 }

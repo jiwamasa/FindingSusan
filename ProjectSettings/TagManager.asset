@@ -40,6 +40,9 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Hide
+    uniqueID: 1750760477
+    locked: 0
   - name: UI
     uniqueID: 136456555
     locked: 0
