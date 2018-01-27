@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 // compares nodes by their distances from blip
 class NodeComparer : IComparer<Pair<Vector2, GameObject>> {
@@ -20,9 +21,17 @@ public class Tune : MonoBehaviour {
 	public GameObject blip_obj; // blip sprite on the minimap
 	public SpriteRenderer static_sprite; // static sprite for creating static effect
 	public List<Pair<Vector2, GameObject>> nodes; // tunable locations (memories)
-	public bool memory_mode; // has a node been activated?
 	public AudioSource static_channel; // plays static on loop
 	public AudioSource music_channel; // plays music themes for memories
+	public Text x_text; // shows x_coord
+	public Text y_text; // shows y_coord
+
+	[HideInInspector]
+	public Pair<Vector2, GameObject> nearest; // currently nearest node
+	[HideInInspector]
+	public float dist; // current distance to nearest node
+	[HideInInspector]
+	public bool memory_mode; // has a node been activated?
 
 	NodeComparer node_comparer; // compares nodes based on distance from blip
 	float hdir; // horizontal input amount
@@ -32,8 +41,8 @@ public class Tune : MonoBehaviour {
 	const float blip_x_bound = 100f; // horizontal bound
 	const float blip_y_bound = 78.5f; // vertical bound
 	const float blip_shift_back = 0.03f; // amount of shift back if out of bounds
-	const float visible_dist = 30f; // distance before static starts to fade away
-	const float find_dist = 5f; // distance before player can activate memory
+	public const float visible_dist = 30f; // distance before static starts to fade away
+	public const float find_dist = 5f; // distance before player can activate memory
 
 	void Start () {
 		// initialize node list
@@ -83,6 +92,8 @@ public class Tune : MonoBehaviour {
 			node_comparer.blip_pos = blip_obj.transform.localPosition; // update comparer
 			nodes.Sort(node_comparer); // resort list based on distance
 			approachNode(); // check if approaching any memory node, and act accordingly
+			x_text.text = blip_obj.transform.localPosition.x.ToString(); // set x coordinate text
+			y_text.text = blip_obj.transform.localPosition.y.ToString(); // set y coordinate text
 		}
 		/*
 		Debug.Log("nodes:");
@@ -103,12 +114,12 @@ public class Tune : MonoBehaviour {
 			blip_obj.transform.Translate (0, -1 * vdir * blip_shift_back, 0);
 	}
 
-	// updates things when nearing memory node
+	// updates distance when nearing memory node
 	// spawns memory object, fades out static, and fades in music 
 	void approachNode() {
 		// get distance from nearest memory
-		Pair<Vector2, GameObject> nearest = nodes[0];
-		float dist = Vector2.Distance (blip_obj.transform.localPosition, nearest.first);
+		nearest = nodes[0];
+		dist = Vector2.Distance (blip_obj.transform.localPosition, nearest.first);
 		if (dist < visible_dist) { // if within visible distance
 			static_sprite.color = new Color (1, 1, 1, dist / visible_dist); // fade out static
 			static_channel.volume = dist / visible_dist; // fade out static sound
@@ -127,8 +138,6 @@ public class Tune : MonoBehaviour {
 
 	// activates node if node is within find dist
 	void activateNode() {
-		Pair<Vector2, GameObject> nearest = nodes [0];
-		float dist = Vector2.Distance (blip_obj.transform.localPosition, nearest.first);
 		if (dist < find_dist) {
 			memory_mode = true;
 			static_sprite.gameObject.SetActive (false); // hide static
@@ -139,7 +148,6 @@ public class Tune : MonoBehaviour {
 
 	// go back into tuning mode from node
 	void deactivateNode() {
-		Pair<Vector2, GameObject> nearest = nodes [0];
 		nearest.second.GetComponent<Memory> ().endMemory (); // end memory sequence
 		memory_mode = false;
 		static_sprite.gameObject.SetActive (true); // show static

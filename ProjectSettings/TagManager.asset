@@ -40,7 +40,7 @@ TagManager:
   - 
   - 
   m_SortingLayers:
-  - name: Hide
+  - name: Background
     uniqueID: 1750760477
     locked: 0
   - name: UI

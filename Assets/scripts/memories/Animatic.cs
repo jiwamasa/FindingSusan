@@ -17,7 +17,7 @@ public class Animatic : Memory {
 	}
 
 	IEnumerator animate() {
-		int i = 0;
+		int i = sprites.IndexOf(sprite_r.sprite);
 		while (true) {
 			yield return new WaitForSeconds (frame_len);
 			sprite_r.sprite = sprites [i];
