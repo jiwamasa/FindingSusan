@@ -20,6 +20,7 @@ public class Tune : MonoBehaviour {
 	public GameObject blip_obj; // blip sprite on the minimap
 	public SpriteRenderer static_sprite; // static sprite for creating static effect
 	public List<Pair<Vector2, GameObject>> nodes; // tunable locations (memories)
+	public bool memory_mode; // has a node been activated?
 
 	NodeComparer node_comparer; // compares nodes based on distance from blip
 	float hdir; // horizontal input amount
@@ -29,42 +30,54 @@ public class Tune : MonoBehaviour {
 	const float blip_x_bound = 150f; // horizontal bound
 	const float blip_y_bound = 120f; // vertical bound
 	const float blip_shift_back = 0.03f; // amount of shift back if out of bounds
+	const float visible_dist = 30f; // distance before static starts to fade away
+	const float find_dist = 5f; // distance before player can activate memory
 
 	void Start () {
+		// initialize node list
 		node_comparer = new NodeComparer ();
 		node_comparer.blip_pos = blip_obj.transform.localPosition;
 		nodes = new List<Pair<Vector2, GameObject>> ();
-
 		// initialize nodes
-		nodes.Add(new Pair<Vector2, GameObject>(new Vector2(-20f, -20f), GameObject.Find("FrisbeeMinigame")));
-		nodes.Add(new Pair<Vector2, GameObject>(new Vector2(20f, 0), GameObject.Find("BoneDigMinigame")));
-		nodes.Add(new Pair<Vector2, GameObject>(new Vector2(0, 50f), GameObject.Find("SpaceMemory")));
+		nodes.Add(new Pair<Vector2, GameObject>(new Vector2(-30f, -30f), GameObject.Find("FrisbeeMinigame")));
+		nodes.Add(new Pair<Vector2, GameObject>(new Vector2(50f, 0), GameObject.Find("BoneDigMinigame")));
+		nodes.Add(new Pair<Vector2, GameObject>(new Vector2(0, 55f), GameObject.Find("SpaceMemory")));
 		nodes.Sort (node_comparer);
+		// initialize other state
+		memory_mode = false;
 	}
 
 	void FixedUpdate () {
-		// BLOCK NORMAL INPUT IF IN MINIGAME
-		// get arrow keys input
 		hdir = 0;
 		vdir = 0;
-		if (Input.GetKey (KeyCode.UpArrow))
-			++vdir;
-		else if (Input.GetKey (KeyCode.DownArrow))
-			--vdir;
-		else if (Input.GetKey (KeyCode.RightArrow))
-			++hdir;
-		else if (Input.GetKey (KeyCode.LeftArrow))
-			--hdir;
+		if (!memory_mode) {
+			// get arrow keys input
+			if (Input.GetKey (KeyCode.UpArrow))
+				++vdir;
+			else if (Input.GetKey (KeyCode.DownArrow))
+				--vdir;
+			else if (Input.GetKey (KeyCode.RightArrow))
+				++hdir;
+			else if (Input.GetKey (KeyCode.LeftArrow))
+				--hdir;
+			// check spacebar
+			if (Input.GetKey (KeyCode.Space))
+				activateNode ();
+		}
 	}
 
 	void Update() {
-		updateBlip (); // update blip's position based on keyboard input
-		node_comparer.blip_pos = blip_obj.transform.localPosition; // update comparer
-		nodes.Sort(node_comparer);
-
+		if (!memory_mode && (hdir != 0 || vdir != 0)) {
+			updateBlip (); // update blip's position based on keyboard input
+			node_comparer.blip_pos = blip_obj.transform.localPosition; // update comparer
+			nodes.Sort(node_comparer); // resort list based on distance
+			approachNode(); // check if approaching any memory node, and act accordingly
+		}
+		/*
 		Debug.Log("nodes:");
 		for (int i = 0; i < nodes.Count; ++i)
 			Debug.Log (nodes[i].first);
+			*/
 	}
 
 	// updates blips position
@@ -79,4 +92,32 @@ public class Tune : MonoBehaviour {
 			blip_obj.transform.Translate (0, -1 * vdir * blip_shift_back, 0);
 	}
 
+	// updates things when nearing memory node
+	// spawns memory object, fades out static, and fades in music 
+	void approachNode() {
+		// get distance from nearest memory
+		Pair<Vector2, GameObject> nearest = nodes[0];
+		float dist = Vector2.Distance (blip_obj.transform.localPosition, nearest.first);
+		if (dist < visible_dist) { // if within visible distance
+			static_sprite.color = new Color (1, 1, 1, dist / visible_dist); // fade out static
+			if (!nearest.second.activeInHierarchy) { // show nearest memory node
+				nearest.second.SetActive (true);
+				for (int i = 1; i < nodes.Count; ++i) // hide others
+					nodes[i].second.SetActive(false);
+			}
+		} else {
+			nearest.second.SetActive (false); // hide all memory nodes if too far
+		}
+	}
+
+	// activates node if node is within find dist
+	void activateNode() {
+		Pair<Vector2, GameObject> nearest = nodes [0];
+		float dist = Vector2.Distance (blip_obj.transform.localPosition, nearest.first);
+		if (dist < find_dist) {
+			memory_mode = true;
+			static_sprite.gameObject.SetActive (false); // hide static
+			nearest.second.GetComponent<Memory>().startMemory(); // start memory
+		}
+	}
 }

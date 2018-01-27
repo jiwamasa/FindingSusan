@@ -51,6 +51,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\scripts\Animatic.cs" />
+     <Compile Include="Assets\scripts\FrisbeeMinigame\FrisbeeDog.cs" />
+     <Compile Include="Assets\scripts\FrisbeeMinigame\FrisbeeMinigame.cs" />
+     <Compile Include="Assets\scripts\Memory.cs" />
      <Compile Include="Assets\scripts\Pair.cs" />
      <Compile Include="Assets\scripts\SetResolution.cs" />
      <Compile Include="Assets\scripts\Tune.cs" />
