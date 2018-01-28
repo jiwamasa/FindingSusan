@@ -10,6 +10,7 @@ public class Animatic : Memory {
 
 	public override void startMemory () {
 		StartCoroutine (animate ());
+		ScoreKeeper.main.addScore (gameObject);
 	}
 
 	public override void endMemory() {

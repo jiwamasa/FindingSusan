@@ -57,6 +57,7 @@
      <Compile Include="Assets\scripts\memories\FrisbeeMinigame\FrisbeeMinigame.cs" />
      <Compile Include="Assets\scripts\memories\Instructions.cs" />
      <Compile Include="Assets\scripts\memories\Memory.cs" />
+     <Compile Include="Assets\scripts\ScoreKeeper.cs" />
      <Compile Include="Assets\scripts\Tune.cs" />
      <Compile Include="Assets\scripts\UIEffects.cs" />
      <Compile Include="Assets\scripts\utility\Pair.cs" />

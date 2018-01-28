@@ -46,6 +46,9 @@ TagManager:
   - name: UI
     uniqueID: 136456555
     locked: 0
+  - name: Progress
+    uniqueID: 1435694337
+    locked: 0
   - name: Memory
     uniqueID: 1069532025
     locked: 0

@@ -8,6 +8,7 @@ public class FrisbeeMinigame : Memory {
 	public FrisbeeDog dog; // dog script
 	public Rigidbody2D frisbee_r_body; // frisbee rigid body
 	public TextMesh score_text; // displays score
+	public TextMesh up_text; // displays 'up'
 
 	int score; // keeps track of frisbees caught
 	Vector2 frisbee_start_pos; // starting position of frisbee
@@ -15,6 +16,7 @@ public class FrisbeeMinigame : Memory {
 
 	const float throw_wait = 4f; // time between frisbee throws
 	const float frisbee_grav = 0.5f; // gravity scale of frisbee
+	const int max_score = 3; // max catchable before collecting memory
 
 	void Start() {
 		frisbee_start_pos = new Vector2 (1.2f, 0.25f);
@@ -25,6 +27,7 @@ public class FrisbeeMinigame : Memory {
 		Debug.Log ("starting frisbee game");
 		dog.gameObject.SetActive (true);
 		frisbee_r_body.gameObject.SetActive (true);
+		up_text.gameObject.SetActive (true);
 		score_text.gameObject.SetActive (true);
 		score_text.text = "0";
 		resetFrisbee ();
@@ -37,6 +40,7 @@ public class FrisbeeMinigame : Memory {
 		resetFrisbee ();
 		dog.gameObject.SetActive (false);
 		frisbee_r_body.gameObject.SetActive (false);
+		up_text.gameObject.SetActive (false);
 		score_text.gameObject.SetActive (false);
 	}
 
@@ -54,6 +58,8 @@ public class FrisbeeMinigame : Memory {
 	public void caughtFrisbee(GameObject frisbee_obj) {
 		score_text.text = (++score).ToString();
 		resetFrisbee ();
+		if (score >= max_score)
+			ScoreKeeper.main.addScore (gameObject);
 	}
 
 	// catches frisbees that are about to go off screen

@@ -14,7 +14,7 @@ public class DiggingMinigame : Memory {
 	const float shake_amt = 0.2f;  // amount of screen shake
 	const float shake_time = 0.4f; // length of screen shake
 	const int dig_amt = 3;  // number of times needed to dig
-	const int bone_loc = 7; // location of bone
+	const int bone_loc = 3; // location of bone
 
 	void Start() {
 		digging = false;
@@ -60,13 +60,17 @@ public class DiggingMinigame : Memory {
 	}
 
 	// dig a specific hole if not already digging
+	// if bone is found, add score
 	void digHole(int i) {
+		if (hole_state[i] <= 0) return;
 		if (!digging) {
 			StartCoroutine (screenShake ());
 			if (--hole_state [i] == 0) {
 				holes [i].SetActive (true);
-				if (i == bone_loc)
-					Debug.Log ("you found the bone!");
+				Debug.Log (i);
+				if (i == bone_loc) {
+					ScoreKeeper.main.addScore (gameObject);
+				}
 			}
 		}
 	}

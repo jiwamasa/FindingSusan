@@ -141,6 +141,7 @@ public class Tune : MonoBehaviour {
 	// activates node if node is within find dist
 	void activateNode() {
 		if (dist < find_dist) {
+			if (nearest.second.name.CompareTo("Instructions") == 0) return; // dont count instructions
 			memory_mode = true;
 			static_sprite.gameObject.SetActive (false); // hide static
 			static_channel.mute = true; // turn off static noise
