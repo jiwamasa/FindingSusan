@@ -27,6 +27,11 @@ public class NormalAttack : MonoBehaviour {
 			yield return new WaitForSeconds (0.1f);
 		}
 		sprite_r.sprite = null;
+		for (int i = 0; i < 60; ++i) {
+			final_boss_rpg.dog_catcher.GetComponent<SpriteRenderer> ().color = 
+				new Color (1, 1, 1, 1f - (float)i/60f);
+			yield return new WaitForEndOfFrame ();
+		}
 		StartCoroutine (final_boss_rpg.endCutscene ());
 	}
 

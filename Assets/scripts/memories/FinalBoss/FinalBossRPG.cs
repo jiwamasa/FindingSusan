@@ -13,7 +13,7 @@ public class FinalBossRPG : Memory {
 	public GameObject defeated;
 	public GameObject menu;
 	public GameObject cursor;
-
+	public GameObject dog_catcher;
 	public AudioSource music_channel;
 
 	bool menu_mode;

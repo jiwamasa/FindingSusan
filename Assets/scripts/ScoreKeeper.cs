@@ -11,7 +11,7 @@ public class ScoreKeeper : MonoBehaviour {
 
 	List<GameObject> collected; // list of collected memories
 
-	const int max_score = 1; // number of memories collectable
+	const int max_score = 6; // number of memories collectable
 	const float mask_start = 200f; // starting 'Top' of mask (goes up to 0)
 
 	void Start() {
