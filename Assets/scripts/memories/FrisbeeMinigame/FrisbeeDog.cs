@@ -5,6 +5,7 @@ using UnityEngine;
 // manages dog control during frisbee minigame
 public class FrisbeeDog : MonoBehaviour {
 	public FrisbeeMinigame frisbee_minigame; // manages minigame
+	public AudioSource jump_sfx;
 
 	Rigidbody2D r_body; // rigid body of dog
 	Vector2 jump_vec; // jump force vector
@@ -18,6 +19,7 @@ public class FrisbeeDog : MonoBehaviour {
 	
 	void FixedUpdate() {
 		if (grounded && Input.GetKeyDown (KeyCode.UpArrow)) { // jump
+			jump_sfx.Play();
 			r_body.AddForce(jump_vec);
 			grounded = false;
 		}

@@ -7,6 +7,7 @@ public class ScoreKeeper : MonoBehaviour {
 	public static ScoreKeeper main = null; // global static reference
 	public SpriteMask progress_mask; // for showing progress
 	public Tune tune;
+	public GameObject alert_text; 
 
 	List<GameObject> collected; // list of collected memories
 
@@ -21,6 +22,8 @@ public class ScoreKeeper : MonoBehaviour {
 	// add collected memories
 	public void addScore(GameObject memory) {
 		if (!collected.Contains (memory)) collected.Add (memory);
+		if (collected.Count > max_score)
+			return;
 		Debug.Log ("current score:" + collected.Count);
 		float offset = mask_start - (mask_start * ((float)collected.Count/(float)(max_score + 2)));
 		progress_mask.GetComponent<RectTransform> ().offsetMax = new Vector2 (0, -1 * offset);
@@ -31,13 +34,15 @@ public class ScoreKeeper : MonoBehaviour {
 		}
 	}
 
-	// flashes meter and starts battle
+	// flashes meter and found susan warning and starts battle
 	IEnumerator flashMeter() {
-		for (int i = 0; i < 3; ++i) {
+		for (int i = 0; i < 4; ++i) {
 			progress_mask.gameObject.SetActive (false);
-			yield return new WaitForSeconds (0.3f);
+			alert_text.gameObject.SetActive (true);
+			yield return new WaitForSeconds (0.5f);
 			progress_mask.gameObject.SetActive (true);
-			yield return new WaitForSeconds (0.3f);
+			alert_text.gameObject.SetActive (false);
+			yield return new WaitForSeconds (0.5f);
 		}
 		tune.activateRPG ();
 	}

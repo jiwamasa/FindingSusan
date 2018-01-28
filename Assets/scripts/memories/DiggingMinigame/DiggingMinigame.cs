@@ -6,6 +6,7 @@ using UnityEngine;
 public class DiggingMinigame : Memory {	
 	public Tune tune; // main tuner script
 	public Transform main_camera; // main camera object for screen shake
+	public AudioSource dig_sfx;
 
 	GameObject[] holes; // array of hole sprites (0-8)
 	int[] hole_state; // states of holes (how much dug)
@@ -64,6 +65,7 @@ public class DiggingMinigame : Memory {
 	void digHole(int i) {
 		if (hole_state[i] <= 0) return;
 		if (!digging) {
+			dig_sfx.Play ();
 			StartCoroutine (screenShake ());
 			if (--hole_state [i] == 0) {
 				holes [i].SetActive (true);

@@ -33,6 +33,7 @@ public class UIEffects : MonoBehaviour {
 	}
 
 	void Update () {
+		if (tune.final_boss) return;
 		// turn off all masks
 		foreach (GameObject obj in arrow_masks) obj.SetActive (false);
 		if (!tune.memory_mode) {

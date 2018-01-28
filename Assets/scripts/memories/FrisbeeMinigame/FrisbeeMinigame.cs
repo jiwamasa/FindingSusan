@@ -9,6 +9,7 @@ public class FrisbeeMinigame : Memory {
 	public Rigidbody2D frisbee_r_body; // frisbee rigid body
 	public TextMesh score_text; // displays score
 	public TextMesh up_text; // displays 'up'
+	public AudioSource catch_sfx;
 
 	int score; // keeps track of frisbees caught
 	Vector2 frisbee_start_pos; // starting position of frisbee
@@ -56,6 +57,7 @@ public class FrisbeeMinigame : Memory {
 
 	// called when frisbee is caught
 	public void caughtFrisbee(GameObject frisbee_obj) {
+		catch_sfx.Play ();
 		score_text.text = (++score).ToString();
 		resetFrisbee ();
 		if (score >= max_score)

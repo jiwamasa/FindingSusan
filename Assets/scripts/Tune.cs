@@ -26,6 +26,7 @@ public class Tune : MonoBehaviour {
 	public Text x_text; // shows x_coord
 	public Text y_text; // shows y_coord
 	public GameObject final_boss_memory; // memory of final boss
+	public GameObject view_memory_mask; 
 
 	[HideInInspector]
 	public Pair<Vector2, GameObject> nearest; // currently nearest node
@@ -166,13 +167,27 @@ public class Tune : MonoBehaviour {
 	// activates final rpg battle memory node
 	public void activateRPG() {
 		Debug.Log ("starting rpg battle...");
-		final_boss = true;
-		static_sprite.gameObject.SetActive (false); // hide static
-		static_channel.mute = true; // turn off static noise
-		music_channel.Stop(); // stop music
+		StartCoroutine (preBossStatic ());
+	}
+
+	// show static before final battle
+	IEnumerator preBossStatic() {
+		view_memory_mask.SetActive (false);
 		for (int i = 0; i < nodes.Count; ++i) // hide all other nodes
 			nodes[i].second.SetActive(false);
+		final_boss = true;
+		music_channel.Stop(); // stop music
+		static_sprite.gameObject.SetActive (true); // show static
+		static_sprite.color = new Color(1, 1, 1, 1);
+		static_channel.mute = false; // turn on static noise
+		static_channel.volume = 1;
+		yield return new WaitForSeconds (2.5f);
+		static_sprite.gameObject.SetActive (false); // hide static
+		static_channel.mute = true; // turn off static noise
 		final_boss_memory.SetActive(true);
+		music_channel.clip = final_boss_memory.GetComponent<Memory> ().music;
+		music_channel.volume = 1;
+		music_channel.Play ();
 		final_boss_memory.GetComponent<Memory> ().startMemory ();
 	}
 }

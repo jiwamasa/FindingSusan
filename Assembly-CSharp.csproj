@@ -54,6 +54,7 @@
      <Compile Include="Assets\scripts\memories\Animatic.cs" />
      <Compile Include="Assets\scripts\memories\DiggingMinigame\DiggingMinigame.cs" />
      <Compile Include="Assets\scripts\memories\FinalBoss\FinalBossRPG.cs" />
+     <Compile Include="Assets\scripts\memories\FinalBoss\NormalAttack.cs" />
      <Compile Include="Assets\scripts\memories\FrisbeeMinigame\FrisbeeDog.cs" />
      <Compile Include="Assets\scripts\memories\FrisbeeMinigame\FrisbeeMinigame.cs" />
      <Compile Include="Assets\scripts\memories\Instructions.cs" />
