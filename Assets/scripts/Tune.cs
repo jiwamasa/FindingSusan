@@ -25,6 +25,7 @@ public class Tune : MonoBehaviour {
 	public AudioSource music_channel; // plays music themes for memories
 	public Text x_text; // shows x_coord
 	public Text y_text; // shows y_coord
+	public GameObject final_boss_memory; // memory of final boss
 
 	[HideInInspector]
 	public Pair<Vector2, GameObject> nearest; // currently nearest node
@@ -32,6 +33,8 @@ public class Tune : MonoBehaviour {
 	public float dist; // current distance to nearest node
 	[HideInInspector]
 	public bool memory_mode; // has a node been activated?
+	[HideInInspector]
+	public bool final_boss; // are we fighting the final boss?
 
 	NodeComparer node_comparer; // compares nodes based on distance from blip
 	float hdir; // horizontal input amount
@@ -62,12 +65,14 @@ public class Tune : MonoBehaviour {
 			node.second.SetActive (false);
 		// initialize other state
 		memory_mode = false;
+		final_boss = false;
 		approachNode(); 
 	}
 
 	void FixedUpdate () {
 		hdir = 0;
 		vdir = 0;
+		if (final_boss) return;
 		if (!memory_mode) {
 			// get arrow keys input
 			if (Input.GetKey (KeyCode.UpArrow))
@@ -89,6 +94,7 @@ public class Tune : MonoBehaviour {
 	}
 
 	void Update() {
+		if (final_boss) return;
 		if (!memory_mode && (hdir != 0 || vdir != 0)) {
 			updateBlip (); // update blip's position based on keyboard input
 			node_comparer.blip_pos = blip_obj.transform.localPosition; // update comparer
@@ -155,5 +161,18 @@ public class Tune : MonoBehaviour {
 		memory_mode = false;
 		static_sprite.gameObject.SetActive (true); // show static
 		static_channel.mute = false; // turn on static noise
+	}
+
+	// activates final rpg battle memory node
+	public void activateRPG() {
+		Debug.Log ("starting rpg battle...");
+		final_boss = true;
+		static_sprite.gameObject.SetActive (false); // hide static
+		static_channel.mute = true; // turn off static noise
+		music_channel.Stop(); // stop music
+		for (int i = 0; i < nodes.Count; ++i) // hide all other nodes
+			nodes[i].second.SetActive(false);
+		final_boss_memory.SetActive(true);
+		final_boss_memory.GetComponent<Memory> ().startMemory ();
 	}
 }

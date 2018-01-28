@@ -6,10 +6,11 @@ using UnityEngine;
 public class ScoreKeeper : MonoBehaviour {
 	public static ScoreKeeper main = null; // global static reference
 	public SpriteMask progress_mask; // for showing progress
+	public Tune tune;
 
 	List<GameObject> collected; // list of collected memories
 
-	const int max_score = 6; // number of memories collectable
+	const int max_score = 1; // number of memories collectable
 	const float mask_start = 200f; // starting 'Top' of mask (goes up to 0)
 
 	void Start() {
@@ -23,11 +24,22 @@ public class ScoreKeeper : MonoBehaviour {
 		Debug.Log ("current score:" + collected.Count);
 		float offset = mask_start - (mask_start * ((float)collected.Count/(float)(max_score + 2)));
 		progress_mask.GetComponent<RectTransform> ().offsetMax = new Vector2 (0, -1 * offset);
-		if (collected.Count >= 6) {
-			progress_mask.GetComponent<RectTransform> ().offsetMax = new Vector2 (0, mask_start);
+		if (collected.Count >= max_score) {
+			progress_mask.GetComponent<RectTransform> ().offsetMax = new Vector2 (0, 0);
+			StartCoroutine (flashMeter ());
 			Debug.Log ("BOSS BATTLE");
 		}
 	}
-	
+
+	// flashes meter and starts battle
+	IEnumerator flashMeter() {
+		for (int i = 0; i < 3; ++i) {
+			progress_mask.gameObject.SetActive (false);
+			yield return new WaitForSeconds (0.3f);
+			progress_mask.gameObject.SetActive (true);
+			yield return new WaitForSeconds (0.3f);
+		}
+		tune.activateRPG ();
+	}
 
 }
