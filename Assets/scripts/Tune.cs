@@ -55,6 +55,8 @@ public class Tune : MonoBehaviour {
 		nodes.Add(new Pair<Vector2, GameObject>(new Vector2(50f, 0), GameObject.Find("BoneDigMinigame")));
 		nodes.Add(new Pair<Vector2, GameObject>(new Vector2(0, 55f), GameObject.Find("SpaceMemory")));
 		nodes.Add(new Pair<Vector2, GameObject>(new Vector2(20f, -40f), GameObject.Find("WatermelonMemory")));
+		nodes.Add(new Pair<Vector2, GameObject>(new Vector2(-50f, 50f), GameObject.Find("CuddleMemory")));
+		nodes.Add(new Pair<Vector2, GameObject>(new Vector2(35f, 30f), GameObject.Find("RubMemory")));
 		nodes.Sort (node_comparer);
 		foreach (Pair<Vector2, GameObject> node in nodes)
 			node.second.SetActive (false);
