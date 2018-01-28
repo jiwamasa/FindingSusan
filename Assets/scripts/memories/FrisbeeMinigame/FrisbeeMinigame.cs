@@ -59,6 +59,8 @@ public class FrisbeeMinigame : Memory {
 	public void caughtFrisbee(GameObject frisbee_obj) {
 		catch_sfx.Play ();
 		score_text.text = (++score).ToString();
+		if (score >= 3)
+			score_text.text = "MEMORY COLLECTED";
 		resetFrisbee ();
 		if (score >= max_score)
 			ScoreKeeper.main.addScore (gameObject);

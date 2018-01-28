@@ -8,8 +8,10 @@ public class NormalAttack : MonoBehaviour {
 	public List<Sprite> sprites; 
 	public Transform screen;
 	public SpriteRenderer sprite_r;
+	public AudioSource attack_sfx;
 
 	public Coroutine playAnimation() {
+		attack_sfx.Play ();
 		final_boss_rpg.menu.SetActive (false);
 		final_boss_rpg.cursor.SetActive (false);
 		return StartCoroutine (animate ());

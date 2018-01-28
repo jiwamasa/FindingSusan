@@ -7,11 +7,11 @@ public class Instructions : Animatic {
 	public GameObject instruction_text;
 
 	void Start() {
-		startMemory ();
+		StartCoroutine (animate ());
 	}
 
 	public override void startMemory () {
-		StartCoroutine (animate ());
+		
 	}
 
 	public override void endMemory () {

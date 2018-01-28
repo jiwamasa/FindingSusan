@@ -7,7 +7,9 @@ public class ScoreKeeper : MonoBehaviour {
 	public static ScoreKeeper main = null; // global static reference
 	public SpriteMask progress_mask; // for showing progress
 	public Tune tune;
-	public GameObject alert_text; 
+	public GameObject alert_text;
+	public AudioSource collect_sfx;
+	public AudioSource alarm_sfx;
 
 	List<GameObject> collected; // list of collected memories
 
@@ -21,7 +23,10 @@ public class ScoreKeeper : MonoBehaviour {
 
 	// add collected memories
 	public void addScore(GameObject memory) {
-		if (!collected.Contains (memory)) collected.Add (memory);
+		if (!collected.Contains (memory)) {
+			collect_sfx.Play ();
+			collected.Add (memory);
+		}
 		if (collected.Count > max_score)
 			return;
 		Debug.Log ("current score:" + collected.Count);
@@ -37,6 +42,7 @@ public class ScoreKeeper : MonoBehaviour {
 	// flashes meter and found susan warning and starts battle
 	IEnumerator flashMeter() {
 		for (int i = 0; i < 4; ++i) {
+			alarm_sfx.Play ();
 			progress_mask.gameObject.SetActive (false);
 			alert_text.gameObject.SetActive (true);
 			yield return new WaitForSeconds (0.5f);

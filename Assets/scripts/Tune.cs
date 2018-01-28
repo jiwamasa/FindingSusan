@@ -27,6 +27,7 @@ public class Tune : MonoBehaviour {
 	public Text y_text; // shows y_coord
 	public GameObject final_boss_memory; // memory of final boss
 	public GameObject view_memory_mask; 
+	public GameObject search_memory_mask;
 
 	[HideInInspector]
 	public Pair<Vector2, GameObject> nearest; // currently nearest node
@@ -174,6 +175,7 @@ public class Tune : MonoBehaviour {
 	// show static before final battle
 	IEnumerator preBossStatic() {
 		view_memory_mask.SetActive (false);
+		search_memory_mask.SetActive (false);
 		for (int i = 0; i < nodes.Count; ++i) // hide all other nodes
 			nodes[i].second.SetActive(false);
 		final_boss = true;
